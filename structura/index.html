@@ -1,0 +1,1501 @@
+<title>Structura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: translucent sticky bar on top; inset-grouped topic list left; one rounded workspace right (segmented Learn / Visualize / Code / Quiz, or the Grok chat). Stacks on phones. Single balanced-light look, iOS-style motion. */
+:root{
+  --bg:#F2F3F7; --surface:#FFFFFF; --surface2:#F0F1F6; --fill:#E6E8EF; --fg:#1B1C21; --muted:#6B6E7A; --line:#E3E5EC;
+  --accent:#0A6CF0; --accent-soft:#E6F0FF; --accent-fg:#FFFFFF;
+  --hi:#D98200; --hi-soft:#FFF0D3; --ok:#23975A; --ok-soft:#DFF4E8; --bad:#D93A30; --bad-soft:#FDE6E4;
+  --code-bg:#F6F7FB; --code-fg:#232733; --code-k:#0A6CF0; --code-c:#8A8F9E; --code-s:#1F8A55;
+  --shadow:0 1px 2px rgba(25,30,50,.04),0 6px 20px rgba(25,30,50,.06);
+  --shadow-lg:0 2px 6px rgba(25,30,50,.05),0 18px 44px rgba(25,30,50,.12);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Inter,"Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.32,.72,0,1); --spring:cubic-bezier(.34,1.56,.64,1);
+  --r-lg:26px; --r-md:18px; --r-sm:12px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--font);-webkit-font-smoothing:antialiased;padding-block:0 64px}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:16px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+html[data-grok]:not([data-grok="ready"]) .grok-only{display:none!important}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(242,243,247,.74);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);border-bottom:1px solid rgba(25,30,50,.06);animation:drop .7s var(--ease) both}
+.barin{display:flex;align-items:center;gap:18px 32px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:12px;flex:none}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#4C9BFF,#0A6CF0);display:grid;place-items:center;box-shadow:0 6px 16px rgba(10,108,240,.28)}
+.brand h1{margin:0;font:700 20px/1.1 var(--font);letter-spacing:-.02em}
+.brand p{margin:2px 0 0;font:500 12px/1.2 var(--font);color:var(--muted)}
+.ask{display:flex;align-items:center;gap:8px;flex:1;min-width:0;background:var(--fill);border-radius:999px;padding:5px 5px 5px 14px;transition:box-shadow .35s var(--ease),background .35s var(--ease)}
+.ask:focus-within{background:var(--surface);box-shadow:0 0 0 3px rgba(10,108,240,.22),var(--shadow)}
+.ask svg{flex:none;color:var(--muted)}
+.ask input{flex:1;min-width:0;border:0;background:none;outline:none;padding:7px 2px}
+.ask input::placeholder{color:var(--muted)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;background:var(--surface);border:0;color:var(--fg);padding:7px 14px;border-radius:999px;font-size:13px;cursor:pointer;box-shadow:var(--shadow);transition:transform .35s var(--spring),color .2s}
+.chip:active{transform:scale(.94)}
+@media (hover:hover){.chip:hover{color:var(--accent)}}
+.chip:disabled{opacity:.5;cursor:default}
+
+/* buttons */
+.btn{background:var(--fill);border:0;padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:550;transition:transform .35s var(--spring),background .25s,opacity .25s}
+.btn:active:not(:disabled){transform:scale(.94)}
+@media (hover:hover){.btn:hover:not(:disabled){background:#DCDFE8}.btn.pri:hover:not(:disabled){background:#0860D8}}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn.sm{padding:6px 13px;font-size:13px}
+
+/* shell */
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);gap:32px;align-items:start;padding-top:18px}
+nav{display:flex;flex-direction:column;position:sticky;top:calc(84px + env(safe-area-inset-top,0px));background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:8px;gap:2px}
+nav button{display:flex;align-items:center;justify-content:space-between;gap:8px;background:none;border:0;border-radius:var(--r-sm);padding:10px 12px;text-align:left;cursor:pointer;font-weight:550;transition:background .3s var(--ease),color .3s var(--ease),transform .35s var(--spring);animation:rise .7s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
+nav button small{font:500 11px var(--mono);color:var(--muted)}
+nav button:active{transform:scale(.97)}
+@media (hover:hover){nav button:hover{background:var(--surface2)}}
+nav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+nav button[aria-current="true"] small{color:var(--accent)}
+.navchat{gap:10px!important;justify-content:flex-start!important}
+.navchat .navtxt{flex:1}
+.navglyph{width:26px;height:26px;border-radius:9px;background:linear-gradient(145deg,#8E7BFF,#5A5CF0);display:grid;place-items:center;color:#fff}
+.navsep{height:1px;background:var(--line);margin:6px 10px}
+main{min-width:0}
+.enter{animation:enter .6s var(--ease) both}
+.thead h2{margin:0;font:700 clamp(30px,5vw,44px)/1.05 var(--font);letter-spacing:-.035em}
+.thead .tag{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:999px;background:var(--accent-soft);font:600 11px var(--mono);color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.thead p{margin:10px 0 0;color:var(--muted);max-width:60ch}
+
+/* segmented control */
+.seg{position:relative;display:flex;max-width:460px;margin-block:22px 24px;padding:3px;background:var(--fill);border-radius:14px}
+.seg button{position:relative;z-index:1;flex:1;background:none;border:0;padding:8px 10px;border-radius:11px;cursor:pointer;font-weight:550;color:var(--muted);transition:color .3s var(--ease)}
+.seg button[aria-selected="true"]{color:var(--fg)}
+.thumb{position:absolute;top:3px;bottom:3px;left:0;width:0;background:var(--surface);border-radius:11px;box-shadow:0 1px 3px rgba(25,30,50,.12),0 3px 10px rgba(25,30,50,.06);transition:transform .5s var(--ease),width .5s var(--ease)}
+.thumb.noanim{transition:none}
+
+/* answer sheet */
+#answer{margin-top:4px}
+.answer{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:20px 22px;margin-bottom:26px;display:grid;gap:12px;transform-origin:top center;animation:sheet .6s var(--spring) both}
+.answer.out{animation:sheetout .26s var(--ease) both}
+.answer header{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.answer h3{margin:0;font:650 19px var(--font);letter-spacing:-.015em}
+.answer p{margin:0;max-width:68ch}
+.answer ul{margin:0;padding-left:20px;display:grid;gap:5px}
+.answer .q{font:500 12px var(--mono);color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+
+/* learn */
+.learn{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+.prose p{margin:0 0 14px;max-width:62ch}
+.analogy{margin:18px 0 16px;padding:16px 18px;background:var(--accent-soft);border-radius:var(--r-md);max-width:62ch}
+.analogy b{display:block;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.side{display:grid;gap:16px;min-width:0}
+.card{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);padding:16px 18px;min-width:0;animation:rise .7s var(--ease) both;animation-delay:calc(var(--i,0)*70ms + 80ms)}
+.card h3{margin:0 0 10px;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.card ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:4px 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.cx{font-family:var(--mono);font-size:13px;white-space:nowrap}
+td.cx.c1{color:var(--ok)} td.cx.c2{color:var(--accent)} td.cx.c3{color:var(--hi)}
+
+/* visualizer */
+.vbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end;margin-bottom:14px}
+.fld{display:grid;gap:4px;font:600 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.fld input,.fld select{background:var(--surface);border:0;box-shadow:inset 0 0 0 1px var(--line);padding:8px 12px;border-radius:12px;font:400 14px var(--mono);color:var(--fg);text-transform:none;letter-spacing:0;width:110px;transition:box-shadow .3s var(--ease)}
+.fld input:focus,.fld select:focus{outline:none;box-shadow:inset 0 0 0 2px var(--accent)}
+.stage{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px;min-height:240px;overflow-x:auto;display:grid;place-items:center}
+.vlog{margin:12px 2px 0;color:var(--muted);min-height:3.2em;max-width:72ch}
+.vask{margin-top:4px}
+.cell{min-width:48px;height:44px;padding-inline:8px;display:grid;place-items:center;border-radius:12px;background:var(--surface2);box-shadow:inset 0 0 0 1.5px var(--line);font:500 14px var(--mono);transition:background .3s var(--ease),box-shadow .3s var(--ease)}
+.cell.hi{background:var(--hi-soft);box-shadow:inset 0 0 0 2px var(--hi);animation:pop .5s var(--spring)}
+.cell.ok{background:var(--ok-soft);box-shadow:inset 0 0 0 2px var(--ok);animation:pop .5s var(--spring)}
+.cap{font:600 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center}
+.empty{color:var(--muted);font:400 13px var(--mono);padding:14px}
+.stackbox{display:grid;gap:8px;justify-items:center;width:140px}
+.col{display:flex;flex-direction:column-reverse;gap:5px;width:100%}
+.qrow,.arr,.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.slot{display:grid;gap:5px;justify-items:center}
+.slot small{font:400 11px var(--mono);color:var(--muted)}
+.lrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 5px;justify-content:center}
+.lnode{display:flex;border-radius:12px;background:var(--surface2);box-shadow:inset 0 0 0 1.5px var(--line);font:500 14px var(--mono);overflow:hidden;transition:background .3s var(--ease)}
+.lnode span{padding:10px 13px}
+.lnode i{display:block;width:28px;border-left:1.5px solid var(--line);position:relative}
+.lnode i::after{content:"";position:absolute;inset:0;margin:auto;width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.lnode.hi{background:var(--hi-soft);box-shadow:inset 0 0 0 2px var(--hi);animation:pop .5s var(--spring)}
+.lnode.ok{background:var(--ok-soft);box-shadow:inset 0 0 0 2px var(--ok);animation:pop .5s var(--spring)}
+.arrow{color:var(--muted);font-family:var(--mono)}
+.ltag{font:600 11px var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+svg.tree{max-width:100%;height:auto}
+.edge{stroke:var(--line);stroke-width:2.5;stroke-linecap:round;transition:stroke .3s}
+.edge.on{stroke:var(--accent)}
+.node circle{fill:var(--surface2);stroke:var(--accent);stroke-width:2.5;transition:fill .3s var(--ease)}
+.node text{fill:var(--fg);font:500 13px var(--mono);text-anchor:middle;dominant-baseline:central}
+.node.hi circle{fill:var(--hi-soft);stroke:var(--hi);transform-box:fill-box;transform-origin:center;animation:pop .5s var(--spring)}
+.node.ok circle{stroke:var(--ok);fill:var(--ok-soft)}
+.node.vis circle{fill:var(--accent);stroke:var(--accent)}
+.node.vis text{fill:var(--accent-fg)}
+.node.fr circle{stroke:var(--hi);stroke-dasharray:4 3}
+.node.cur circle{fill:var(--hi);stroke:var(--hi);transform-box:fill-box;transform-origin:center;animation:pop .5s var(--spring)}
+.node.cur text{fill:#fff}
+.below{display:grid;gap:14px;width:100%;justify-items:center}
+.ord{font:400 13px var(--mono);color:var(--muted);min-height:1.5em;text-align:center}
+.ord b{color:var(--fg);font-weight:500}
+.buckets{display:grid;gap:4px;width:100%;max-width:560px}
+.brow{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;min-height:40px;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:0}
+.brow>b{font:500 12px var(--mono);color:var(--muted)}
+.chain .cell{height:32px;min-width:44px;border-radius:10px}
+.gwrap{display:grid;gap:12px;width:100%;justify-items:center}
+.gpanels{display:flex;flex-wrap:wrap;gap:6px 28px;font:400 13px var(--mono);color:var(--muted);justify-content:center}
+.gpanels b{color:var(--fg);font-weight:500}
+
+/* code */
+.codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.codehead span{font:600 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+pre.code{margin:0;background:var(--code-bg);color:var(--code-fg);padding:18px 20px;border-radius:var(--r-md);box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto;font:400 13px/1.65 var(--mono);tab-size:4}
+pre.code .k{color:var(--code-k)} pre.code .c{color:var(--code-c);font-style:italic} pre.code .s{color:var(--code-s)}
+
+/* quiz */
+.quiz{max-width:640px;display:grid;gap:16px}
+.quiz h3{margin:0;font:650 22px/1.3 var(--font);letter-spacing:-.02em}
+.quiz .meta{font:600 12px var(--mono);color:var(--muted)}
+.opt{display:block;width:100%;text-align:left;background:var(--surface);border:0;box-shadow:var(--shadow);padding:13px 16px;border-radius:var(--r-md);cursor:pointer;margin-bottom:10px;transition:transform .35s var(--spring),box-shadow .3s var(--ease)}
+.opt:active:not(:disabled){transform:scale(.98)}
+@media (hover:hover){.opt:hover:not(:disabled){box-shadow:var(--shadow),inset 0 0 0 1.5px var(--accent)}}
+.opt.right{background:var(--ok-soft);box-shadow:inset 0 0 0 2px var(--ok);animation:pop .5s var(--spring)}
+.opt.wrong{background:var(--bad-soft);box-shadow:inset 0 0 0 2px var(--bad)}
+.why{padding:14px 16px;background:var(--surface2);border-radius:var(--r-md);animation:rise .5s var(--ease) both}
+.score{font:700 54px/1 var(--font);letter-spacing:-.03em}
+.note{margin:0;color:var(--muted);font-size:14px}
+
+/* chat */
+.chat{display:grid;gap:14px}
+.status{display:flex;align-items:center;gap:10px;padding:9px 16px;background:var(--surface);border-radius:999px;box-shadow:var(--shadow);font-size:13px;width:fit-content;max-width:100%}
+.dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ready{background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft)}
+.dot.nokey{background:var(--hi);box-shadow:0 0 0 4px var(--hi-soft)}
+.setup{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);padding:18px 20px;display:grid;gap:10px;max-width:640px}
+.setup h3{margin:0;font:650 17px var(--font)}
+.setup ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.setup code{font:13px var(--mono);background:var(--surface2);padding:1px 6px;border-radius:6px}
+.msgs{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:18px;min-height:340px;max-height:min(60vh,560px);overflow-y:auto;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.msg{display:flex;animation:bubbleL .55s var(--spring) both;transform-origin:left bottom}
+.msg.user{justify-content:flex-end;animation-name:bubbleR;transform-origin:right bottom}
+.bubble{max-width:min(84%,640px);padding:10px 15px;border-radius:22px;line-height:1.5;overflow-wrap:anywhere;min-width:0}
+.msg.bot .bubble{background:var(--surface2);border-bottom-left-radius:8px}
+.msg.user .bubble{background:var(--accent);color:var(--accent-fg);border-bottom-right-radius:8px;white-space:pre-wrap}
+.msg.err .bubble{background:var(--bad-soft);color:var(--bad)}
+.bubble p{margin:0 0 8px}
+.bubble p:last-child,.bubble ul:last-child,.bubble ol:last-child{margin-bottom:0}
+.bubble ul,.bubble ol{margin:0 0 8px;padding-left:20px;display:grid;gap:3px}
+.bubble code{font:13px var(--mono);background:rgba(25,30,50,.07);padding:1px 6px;border-radius:6px}
+.bubble pre.code{margin:8px 0;padding:12px 14px;border-radius:14px;font-size:12.5px;background:var(--surface)}
+.bubble pre.code:last-child{margin-bottom:0}
+.typing{display:flex;gap:5px;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1.2s var(--ease) infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+.qchips{display:flex;gap:8px;overflow-x:auto;padding-block:2px 4px;scrollbar-width:none}
+.qchips::-webkit-scrollbar{display:none}
+.composer{display:flex;align-items:flex-end;gap:8px;background:var(--surface);border-radius:26px;box-shadow:var(--shadow);padding:6px 6px 6px 18px;transition:box-shadow .35s var(--ease)}
+.composer:focus-within{box-shadow:0 0 0 3px rgba(10,108,240,.22),var(--shadow)}
+.composer textarea{flex:1;min-width:0;border:0;background:none;resize:none;outline:none;padding:9px 0;max-height:130px;line-height:1.45}
+.composer textarea:disabled{cursor:not-allowed}
+.sendbtn{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .35s var(--spring),opacity .25s,background .25s}
+.sendbtn:active:not(:disabled){transform:scale(.88)}
+.sendbtn:disabled{opacity:.35;cursor:default}
+.sendbtn.stop{background:var(--fg)}
+
+@keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes enter{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes sheet{from{opacity:0;transform:translateY(-14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes sheetout{to{opacity:0;transform:translateY(-10px) scale(.97)}}
+@keyframes pop{from{transform:scale(.86)}to{transform:scale(1)}}
+@keyframes bubbleL{from{opacity:0;transform:translateY(10px) scale(.82)}to{opacity:1;transform:none}}
+@keyframes bubbleR{from{opacity:0;transform:translateY(10px) scale(.82)}to{opacity:1;transform:none}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+
+@media (max-width:900px){.learn{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  .barin{flex-wrap:wrap;gap:10px}
+  .brand{width:100%}
+  .brand p{display:none}
+  .shell{grid-template-columns:minmax(0,1fr);gap:16px}
+  nav{flex-direction:row;overflow-x:auto;position:static;padding:6px;scrollbar-width:none;border-radius:999px}
+  nav::-webkit-scrollbar{display:none}
+  nav button{white-space:nowrap;border-radius:999px;flex:none}
+  nav button small,.navsep{display:none}
+  .seg{max-width:none}
+  .msgs{padding:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+
+<header class="bar">
+  <div class="wrap barin">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.2" fill="#fff"/><circle cx="6" cy="18" r="2.2" fill="#fff"/><circle cx="18" cy="18" r="2.2" fill="#fff"/><path d="M12 7.2 6.8 15.9M12 7.2l5.2 8.7"/></svg></span>
+      <div><h1>Structura</h1><p>Data structures tutor</p></div>
+    </div>
+    <form class="ask" id="askform" autocomplete="off">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" aria-label="Ask a question" placeholder="Ask anything, e.g. heap vs bst">
+      <button class="btn pri sm" type="submit">Ask</button>
+    </form>
+  </div>
+</header>
+<div class="wrap">
+  <div class="chips" id="chips"></div>
+  <div class="shell">
+    <nav id="nav" aria-label="Topics"></nav>
+    <main>
+      <section id="answer" hidden></section>
+      <div id="topic"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var ABORT = Symbol('abort');
+var epoch = 0;
+var $ = function(s, r){ return (r||document).querySelector(s); };
+
+function el(tag, props){
+  var n = document.createElement(tag);
+  props = props || {};
+  for (var k in props){
+    var v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'text') n.textContent = v;
+    else if (k.slice(0,2) === 'on') n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  var kids = Array.prototype.slice.call(arguments, 2);
+  (function add(list){
+    list.forEach(function(c){
+      if (c == null || c === false) return;
+      if (Array.isArray(c)) return add(c);
+      n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    });
+  })(kids);
+  return n;
+}
+var NS = 'http://www.w3.org/2000/svg';
+function sv(tag, props){
+  var n = document.createElementNS(NS, tag);
+  props = props || {};
+  for (var k in props){ if (props[k] != null) n.setAttribute(k, props[k]); }
+  Array.prototype.slice.call(arguments, 2).forEach(function(c){
+    if (c == null) return;
+    n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  });
+  return n;
+}
+function wait(ms){
+  var e = epoch;
+  return new Promise(function(r){ setTimeout(r, reduce ? Math.min(ms, 40) : ms); })
+    .then(function(){ if (e !== epoch) throw ABORT; });
+}
+var store = {
+  get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set: function(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+
+/* ---------------- content ---------------- */
+var TOPICS = [
+{ id:'array', name:'Array', tag:'indexed',
+  tagline:'A row of items stored side by side in memory, reachable by position.',
+  words:['array','arrays','dynamic array','arraylist','vector','python list','contiguous'],
+  explain:[
+    'An array keeps its items in one contiguous block of memory. Every slot has the same size, so the address of item i is start + i × size, and reading or writing any position takes a single step.',
+    'The price is flexibility. Inserting or deleting near the front shifts every later item by one place. A dynamic array (Python list, Java ArrayList, C++ vector) hides a fixed-size array and doubles it when full, which makes append cheap on average.'],
+  analogy:'A row of numbered lockers. You can walk straight to locker 37, but adding a locker in the middle means renumbering everything after it.',
+  cx:[['Access by index','O(1)','O(1)'],['Search (unsorted)','O(n)','O(n)'],['Append','O(1) amortized','O(n)'],['Insert / delete at index','O(n)','O(n)'],['Space','O(n)','O(n)']],
+  use:['You read by position far more often than you insert in the middle','You want data packed tightly for cache speed','You roughly know how many items you will store'],
+  watch:['Inserting or deleting at the front is O(n)','Searching an unsorted array scans everything; sort it and binary search for O(log n)','Off-by-one errors: valid indexes run from 0 to n-1'],
+  code:`class DynamicArray:
+    def __init__(self):
+        self._cap, self._n = 2, 0
+        self._data = [None] * self._cap
+
+    def append(self, x):               # O(1) amortized
+        if self._n == self._cap:       # full: grow by 2x
+            self._resize(self._cap * 2)
+        self._data[self._n] = x
+        self._n += 1
+
+    def insert(self, i, x):            # O(n): shift right
+        if self._n == self._cap:
+            self._resize(self._cap * 2)
+        for j in range(self._n, i, -1):
+            self._data[j] = self._data[j - 1]
+        self._data[i] = x
+        self._n += 1
+
+    def _resize(self, cap):
+        new = [None] * cap
+        for j in range(self._n):
+            new[j] = self._data[j]
+        self._data, self._cap = new, cap`,
+  quiz:[
+    {q:'Reading the element at index 500 of an array takes:',o:['O(1)','O(log n)','O(n)','O(500)'],a:0,w:'The address is start + index × size, one calculation regardless of n.'},
+    {q:'Why is inserting at index 0 slow?',o:['Memory must be reallocated every time','Every existing item shifts one position','The array has to be sorted first','Index 0 is reserved'],a:1,w:'All n items move one slot to the right, so the cost grows with n.'},
+    {q:'A dynamic array doubles its capacity when full. Append is then:',o:['O(1) amortized','O(n) always','O(log n)','O(n²)'],a:0,w:'An occasional O(n) copy is spread across many cheap appends.'}]},
+{ id:'linked-list', name:'Linked List', tag:'pointers',
+  tagline:'Items in separate nodes, each pointing to the next.',
+  words:['linked list','linkedlist','singly linked','doubly linked','node','nodes'],
+  explain:[
+    'A linked list stores each item in its own node, and every node holds a reference to the next one. Nodes can sit anywhere in memory; the chain of references keeps them in order.',
+    'Once you stand at a node, inserting or removing next to it only means re-pointing one or two references. The cost is that you cannot jump to position k: you must walk from the head.'],
+  analogy:'A scavenger hunt where each clue says where the next one is. Adding a clue in the middle is easy; finding clue 50 means following 49 others.',
+  cx:[['Access k-th item','O(n)','O(n)'],['Search','O(n)','O(n)'],['Insert at head','O(1)','O(1)'],['Insert at tail','O(n), O(1) with tail pointer','O(n)'],['Delete (node known)','O(1)','O(1)'],['Space','O(n)','O(n)']],
+  use:['You insert and delete at the front often','You already hold a reference to the node to change, as in an LRU cache','You cannot predict the size and never need random access'],
+  watch:['Update next pointers in the right order or you lose the rest of the list','Handle the empty list and the single-node list explicitly','Poor cache locality makes it slower than arrays in practice'],
+  code:`class Node:
+    def __init__(self, val, nxt=None):
+        self.val, self.next = val, nxt
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def push_front(self, val):         # O(1)
+        self.head = Node(val, self.head)
+
+    def find(self, val):               # O(n)
+        cur = self.head
+        while cur and cur.val != val:
+            cur = cur.next
+        return cur
+
+    def delete(self, val):             # O(n) to find, O(1) to unlink
+        dummy = Node(None, self.head)
+        prev = dummy
+        while prev.next and prev.next.val != val:
+            prev = prev.next
+        if prev.next:
+            prev.next = prev.next.next
+        self.head = dummy.next`,
+  quiz:[
+    {q:'Which operation is fastest on a singly linked list?',o:['Access the item at index k','Insert at the head','Binary search','Find the maximum'],a:1,w:'Inserting at the head only creates a node and re-points head.'},
+    {q:'To delete node X from a singly linked list you need a reference to:',o:['The node before X','Only X itself','The tail','The size of the list'],a:0,w:'The previous node holds the pointer that must skip over X.'},
+    {q:'Why is binary search a poor fit for a linked list?',o:['Nodes are unsorted','There is no O(1) jump to the middle','Pointers only go one way','It uses too much memory'],a:1,w:'Reaching the middle costs O(n), which cancels the savings.'}]},
+{ id:'stack', name:'Stack', tag:'LIFO',
+  tagline:'Add and remove at one end only. The newest item leaves first.',
+  words:['stack','stacks','lifo','call stack','push','pop','peek'],
+  explain:[
+    'A stack allows work at one end only, the top. The last item pushed is the first one popped (LIFO, last in first out).',
+    'That single rule models anything that must be undone in reverse order: function calls, undo history, matching brackets, and depth-first search.'],
+  analogy:'A pile of plates. You add to the top and take from the top.',
+  cx:[['Push','O(1)','O(1)'],['Pop','O(1)','O(1)'],['Peek','O(1)','O(1)'],['Search','O(n)','O(n)'],['Space','O(n)','O(n)']],
+  use:['Undo/redo and browser back history','Parsing nested structures such as brackets or HTML tags','Replacing recursion with an explicit loop'],
+  watch:['Popping an empty stack: check first or handle the error','Unbounded growth is how recursion ends in a stack overflow','In Python use append() and pop() at the end of a list, never insert(0, x)'],
+  code:`class Stack:
+    def __init__(self):
+        self._items = []
+
+    def push(self, x):                 # O(1)
+        self._items.append(x)
+
+    def pop(self):                     # O(1)
+        if not self._items:
+            raise IndexError("pop from empty stack")
+        return self._items.pop()
+
+    def peek(self):
+        return self._items[-1]
+
+    def __len__(self):
+        return len(self._items)
+
+
+def balanced(s):                       # classic stack problem
+    pairs = {")": "(", "]": "[", "}": "{"}
+    st = Stack()
+    for ch in s:
+        if ch in "([{":
+            st.push(ch)
+        elif ch in pairs:
+            if len(st) == 0 or st.pop() != pairs[ch]:
+                return False
+    return len(st) == 0`,
+  quiz:[
+    {q:'Push 1, 2, 3, then pop once. What comes out?',o:['3','1','2','Nothing'],a:0,w:'The last item pushed (3) is the first one popped.'},
+    {q:'Which problem fits a stack most naturally?',o:['Printing jobs in order','Checking balanced brackets','Level-order traversal','Round-robin scheduling'],a:1,w:'The most recent opening bracket must be matched first, which is LIFO.'},
+    {q:'Using a Python list as a stack, which pair is O(1)?',o:['append / pop()','insert(0, x) / pop(0)','append / pop(0)','insert(0, x) / pop()'],a:0,w:'Working at the end of a list avoids shifting items.'}]},
+{ id:'queue', name:'Queue', tag:'FIFO',
+  tagline:'Add at the back, remove from the front. The oldest item leaves first.',
+  words:['queue','queues','fifo','enqueue','dequeue','deque','circular buffer'],
+  explain:[
+    'A queue adds at the back and removes from the front, so the oldest item leaves first (FIFO, first in first out).',
+    'It keeps things fair and in order: print jobs, requests waiting for a server, and breadth-first search all use one.'],
+  analogy:'People in a line at a ticket counter.',
+  cx:[['Enqueue','O(1)','O(1)'],['Dequeue','O(1)','O(1)'],['Peek front','O(1)','O(1)'],['Search','O(n)','O(n)'],['Space','O(n)','O(n)']],
+  use:['Work must be handled in arrival order','Buffering between a fast producer and a slower consumer','Breadth-first search and level-order tree traversal'],
+  watch:['list.pop(0) in Python is O(n); use collections.deque for O(1) at both ends','A circular buffer needs careful full/empty detection','If the most important item should go first, not the oldest, you want a priority queue (heap)'],
+  code:`from collections import deque
+
+class Queue:
+    def __init__(self):
+        self._items = deque()
+
+    def enqueue(self, x):              # O(1)
+        self._items.append(x)
+
+    def dequeue(self):                 # O(1)
+        if not self._items:
+            raise IndexError("dequeue from empty queue")
+        return self._items.popleft()
+
+    def front(self):
+        return self._items[0]
+
+    def __len__(self):
+        return len(self._items)
+
+
+q = Queue()
+for job in ["A", "B", "C"]:
+    q.enqueue(job)
+print(q.dequeue())                     # A, the oldest`,
+  quiz:[
+    {q:'Enqueue A, B, C, then dequeue once. What comes out?',o:['A','C','B','All three'],a:0,w:'A was added first, so it leaves first.'},
+    {q:'Which Python structure gives O(1) removal from the front?',o:['list.pop(0)','collections.deque','set','tuple'],a:1,w:'A deque is a double-ended queue with O(1) operations at both ends.'},
+    {q:'Breadth-first search uses which structure?',o:['A stack','A queue','A heap','A hash table'],a:1,w:'A queue explores the oldest discovered vertices first, producing rings outward.'}]},
+{ id:'bst', name:'Binary Search Tree', tag:'ordered',
+  tagline:'A tree where smaller keys go left and larger keys go right.',
+  words:['bst','binary search tree','binary tree','tree','trees','avl','red-black','red black','balanced tree','inorder','in-order','traversal'],
+  explain:[
+    'A binary search tree gives every node at most two children and keeps one rule: everything in the left subtree is smaller, everything in the right subtree is larger.',
+    'Each comparison discards about half of the remaining tree, so search, insert and delete take O(log n) when the tree is balanced. An in-order traversal visits the keys in sorted order.'],
+  analogy:'Twenty questions. Each answer, smaller or larger, rules out half of what is left.',
+  cx:[['Search','O(log n)','O(n)'],['Insert','O(log n)','O(n)'],['Delete','O(log n)','O(n)'],['Min / max','O(log n)','O(n)'],['Traversal','O(n)','O(n)'],['Space','O(n)','O(n)']],
+  use:['You need data kept sorted while inserting and deleting','Range queries such as every key between 20 and 40','Finding the predecessor or successor of a value'],
+  watch:['Inserting already-sorted data builds a chain and drops every operation to O(n); try the skew demo','Self-balancing trees (AVL, red-black) fix this with rotations','Deleting a node with two children means swapping in its in-order successor'],
+  code:`class Node:
+    def __init__(self, key):
+        self.key, self.left, self.right = key, None, None
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, key):
+        self.root = self._insert(self.root, key)
+
+    def _insert(self, node, key):
+        if node is None:
+            return Node(key)
+        if key < node.key:
+            node.left = self._insert(node.left, key)
+        elif key > node.key:
+            node.right = self._insert(node.right, key)
+        return node
+
+    def search(self, key):             # O(h), h = height
+        node = self.root
+        while node and node.key != key:
+            node = node.left if key < node.key else node.right
+        return node is not None
+
+    def inorder(self, node=None, out=None, first=True):
+        if first:
+            node, out = self.root, []
+        if node:
+            self.inorder(node.left, out, False)
+            out.append(node.key)       # sorted order
+            self.inorder(node.right, out, False)
+        return out`,
+  quiz:[
+    {q:'An in-order traversal of a BST visits the keys in:',o:['Sorted order','Insertion order','Level order','Random order'],a:0,w:'Left subtree, node, right subtree: smaller to larger.'},
+    {q:'Insert 1, 2, 3, 4, 5 in that order into an empty plain BST. The result is:',o:['A perfectly balanced tree','A tree of height 3','A chain of five nodes','An empty tree'],a:2,w:'Each key is larger than all before it and goes right, so search becomes O(n).'},
+    {q:'What prevents a BST from degrading into a chain?',o:['A better hash function','Self-balancing (AVL or red-black)','A larger array','Using a stack'],a:1,w:'Balanced variants rotate nodes to keep the height near log n.'}]},
+{ id:'heap', name:'Heap', tag:'priority',
+  tagline:'A tree stored in an array that always keeps the smallest item on top.',
+  words:['heap','heaps','priority queue','min-heap','max-heap','min heap','max heap','heapq','heapify','heap sort','heapsort'],
+  explain:[
+    'A binary heap is a complete binary tree stored in an array in which every parent is no larger than its children (a min-heap). The smallest item is always at index 0.',
+    'For the node at index i, the children are at 2i+1 and 2i+2 and the parent is at (i-1)//2. Insert adds at the end and bubbles up. Extract-min moves the last item to the root and sifts it down. Each walks one root-to-leaf path, so both are O(log n).'],
+  analogy:'A tournament bracket where the winner sits on top, and only one path needs replaying when the winner leaves.',
+  cx:[['Peek min','O(1)','O(1)'],['Insert','O(log n)','O(log n)'],['Extract min','O(log n)','O(log n)'],['Build from n items','O(n)','O(n)'],['Search any value','O(n)','O(n)']],
+  use:['You repeatedly need the smallest or largest item next (priority queue)','Top-k problems and running medians','Dijkstra, A* and task schedulers'],
+  watch:['A heap is only partially ordered; the array is not sorted','Searching for an arbitrary value is O(n)','Python heapq is a min-heap; negate values to get a max-heap'],
+  code:`class MinHeap:
+    def __init__(self):
+        self.a = []
+
+    def push(self, x):                 # O(log n)
+        a = self.a
+        a.append(x)
+        i = len(a) - 1
+        while i > 0 and a[(i - 1) // 2] > a[i]:
+            p = (i - 1) // 2
+            a[i], a[p] = a[p], a[i]    # bubble up
+            i = p
+
+    def pop(self):                     # O(log n)
+        a = self.a
+        top, last = a[0], a.pop()
+        if a:
+            a[0] = last
+            i = 0
+            while True:                # sift down
+                l, r, m = 2*i + 1, 2*i + 2, i
+                if l < len(a) and a[l] < a[m]: m = l
+                if r < len(a) and a[r] < a[m]: m = r
+                if m == i:
+                    break
+                a[i], a[m] = a[m], a[i]
+                i = m
+        return top`,
+  quiz:[
+    {q:'Where is the smallest value in a min-heap?',o:['At the root, index 0','At the last index','At any leaf','In the middle'],a:0,w:'Every parent is no larger than its children, so the minimum is the root.'},
+    {q:'In an array-based heap, the children of index 3 are at:',o:['5 and 6','6 and 7','7 and 8','3 and 4'],a:2,w:'2×3+1 = 7 and 2×3+2 = 8.'},
+    {q:'Extract-min on a heap costs:',o:['O(1)','O(log n)','O(n)','O(n log n)'],a:1,w:'The replacement item sifts down at most the height of the tree.'}]},
+{ id:'hash', name:'Hash Table', tag:'key → value',
+  tagline:'Turn a key into a bucket number and jump straight to it.',
+  words:['hash table','hash tables','hash map','hashmap','hash','hashing','dictionary','dict','collision','collisions','load factor','set'],
+  explain:[
+    'A hash table runs a key through a hash function to get a number, then uses that number mod the table size to pick a bucket. Lookup goes straight to the bucket instead of searching.',
+    'Two keys can land in the same bucket, which is a collision. This page uses chaining: each bucket holds a small list. When the table gets too full (a high load factor) it resizes and rehashes everything to keep the chains short.'],
+  analogy:'A coat check. You hand over a ticket and the attendant goes directly to the right hook.',
+  cx:[['Lookup','O(1)','O(n)'],['Insert','O(1)','O(n)'],['Delete','O(1)','O(n)'],['Resize','O(n), occasionally','O(n)'],['Space','O(n)','O(n)']],
+  use:['Fast lookup, insert and delete by exact key','Counting, deduplicating and caching','Grouping items by a property'],
+  watch:['Worst case is O(n) if everything collides, so hash quality matters','Keys must be hashable and must not change after insertion','Iteration order is not sorted'],
+  code:`class HashTable:
+    def __init__(self, buckets=7):
+        self.m = buckets
+        self.table = [[] for _ in range(self.m)]
+        self.n = 0
+
+    def _h(self, key):
+        return sum(ord(c) for c in key) % self.m
+
+    def put(self, key, val):           # O(1) average
+        chain = self.table[self._h(key)]
+        for pair in chain:
+            if pair[0] == key:
+                pair[1] = val
+                return
+        chain.append([key, val])
+        self.n += 1
+        if self.n / self.m > 0.75:     # load factor too high
+            self._resize(self.m * 2)
+
+    def get(self, key):
+        for k, v in self.table[self._h(key)]:
+            if k == key:
+                return v
+        raise KeyError(key)
+
+    def _resize(self, m):
+        old = [p for chain in self.table for p in chain]
+        self.m, self.table, self.n = m, [[] for _ in range(m)], 0
+        for k, v in old:
+            self.put(k, v)`,
+  quiz:[
+    {q:'Two different keys map to the same bucket. This is called:',o:['A collision','An overflow','A rehash','A cycle'],a:0,w:'Different keys sharing a bucket is a collision, handled here by chaining.'},
+    {q:'If every key collides into one chain, lookup becomes:',o:['O(1)','O(log n)','O(n)','O(n²)'],a:2,w:'You must scan the whole chain.'},
+    {q:'Why does a hash table resize when its load factor gets high?',o:['To keep chains short','To keep keys sorted','To save memory','To avoid hashing'],a:0,w:'More buckets spread the keys out so each chain stays near length 1.'}]},
+{ id:'graph', name:'Graph', tag:'networks',
+  tagline:'Vertices joined by edges. Roads, friendships and links are all graphs.',
+  words:['graph','graphs','bfs','dfs','breadth first','breadth-first','depth first','depth-first','vertex','vertices','edge','edges','adjacency','shortest path','dijkstra'],
+  explain:[
+    'A graph is a set of vertices (things) joined by edges (relationships). Edges can be directed or undirected and may carry weights.',
+    'The usual storage is an adjacency list: for each vertex, a list of its neighbours. Two traversals matter most. Breadth-first search (BFS) uses a queue and explores in rings, so it finds fewest-edge paths. Depth-first search (DFS) uses a stack and goes as deep as it can before backtracking.'],
+  analogy:'A city map. Intersections are vertices and roads are edges.',
+  cx:[['Add vertex / edge','O(1)','O(1)'],['Check an edge','O(degree)','O(V)'],['BFS / DFS','O(V + E)','O(V + E)'],['Space (adjacency list)','O(V + E)','O(V + E)']],
+  use:['Shortest path or fewest-hops questions','Connectivity, cycles and dependency ordering','Modelling any network of relationships'],
+  watch:['Track visited vertices or a cyclic graph loops forever','BFS gives fewest edges, not lowest total weight; use Dijkstra for weights','An adjacency matrix costs O(V²) space, wasteful for sparse graphs'],
+  code:`from collections import deque
+
+graph = {
+    "A": ["B", "C"], "B": ["A", "D", "G"], "C": ["A", "E", "G"],
+    "D": ["B", "F"], "E": ["C", "F"], "F": ["D", "E"], "G": ["B", "C"],
+}
+
+def bfs(start):                        # queue, level by level
+    seen, order, q = {start}, [], deque([start])
+    while q:
+        cur = q.popleft()
+        order.append(cur)
+        for nb in graph[cur]:
+            if nb not in seen:
+                seen.add(nb)
+                q.append(nb)
+    return order
+
+def dfs(start):                        # stack, deep first
+    seen, order, st = set(), [], [start]
+    while st:
+        cur = st.pop()
+        if cur in seen:
+            continue
+        seen.add(cur)
+        order.append(cur)
+        for nb in reversed(graph[cur]):
+            st.append(nb)
+    return order`,
+  quiz:[
+    {q:'Which traversal finds the fewest-edge path in an unweighted graph?',o:['DFS','BFS','In-order traversal','Binary search'],a:1,w:'BFS explores in rings, so the first time it reaches a vertex is by the fewest edges.'},
+    {q:'An adjacency list uses how much space?',o:['O(V)','O(V + E)','O(V²)','O(E²)'],a:1,w:'One entry per vertex plus one per edge.'},
+    {q:'Why does graph traversal keep a visited set?',o:['To sort the vertices','To avoid revisiting vertices and looping on cycles','To count edges','To store weights'],a:1,w:'Without it, a cycle makes the traversal run forever.'}]}
+];
+var BY = {}; TOPICS.forEach(function(t){ BY[t.id] = t; });
+
+var COMPARE = {
+  'array|linked-list':'Arrays win on reading by index and on cache locality. Linked lists win on cheap inserts and deletes once you hold the node. Mostly reading: use an array. Splicing constantly: consider a linked list, but measure first because arrays are often faster in practice.',
+  'queue|stack':'Both add and remove in O(1) at the ends. A stack returns the newest item first (LIFO); a queue returns the oldest first (FIFO). Stacks power DFS and undo; queues power BFS and scheduling.',
+  'bst|hash':'A hash table is faster for exact lookups (O(1) average) but keeps no order. A BST is O(log n) but stays sorted, so it supports range queries, min/max and in-order walks. Need order: BST. Only exact keys: hash table.',
+  'bst|heap':'A BST orders everything, so you can search any value and walk in sorted order. A heap orders just enough to expose the min or max fast. Repeated "give me the smallest": heap. Searching or range queries: BST.',
+  'heap|queue':'A queue serves the oldest item first. A priority queue, usually built on a heap, serves the most important item first at O(log n) per operation.',
+  'array|hash':'Arrays are indexed by position and hash tables by any key. A hash table is an array whose index is computed by hashing the key.',
+  'graph|stack':'DFS on a graph uses a stack (or recursion): follow one path as deep as possible, then backtrack.',
+  'graph|queue':'BFS on a graph uses a queue: visit everything one edge away, then two edges away, and so on.'
+};
+var BFSDFS = 'BFS uses a queue and explores level by level, which gives fewest-edge paths. DFS uses a stack (or recursion) and dives deep first; it suits cycle detection, topological sorting and exploring every possibility. Both run in O(V + E).';
+
+var SCENARIOS = [
+  [/undo|redo|back button|backtrack|reverse order|nested|parenthes|bracket|call stack/, 'stack', 'the most recent action must be handled first, which is last-in-first-out'],
+  [/waiting line|in order of arrival|first come|buffer|print job|requests? waiting|fair|round.?robin/, 'queue', 'items should be served in the order they arrived, which is first-in-first-out'],
+  [/look ?up|dictionary|by key|key.?value|cache|dedup|duplicate|word count|count.*(word|occurr)|unique|membership|phone ?book/, 'hash', 'you need near-instant access by exact key'],
+  [/sorted|in order|range|between|predecessor|successor|ordered/, 'bst', 'you need the data kept sorted with fast insert, search and range queries'],
+  [/priority|top.?k|smallest|largest|minimum|maximum|kth|schedul|median|urgent|most important/, 'heap', 'you keep asking for the smallest or largest item next'],
+  [/network|route|shortest|path|friend|social|map|dependenc|connect|maze|relationship|web page|link/, 'graph', 'the data is things and the relationships between them'],
+  [/random access|fixed size|matrix|grid|read by (index|position)|fast read|index/, 'array', 'you read items by position and the size is mostly stable'],
+  [/insert.*(front|middle|often)|frequent insert|splice|many insertions|no random access/, 'linked-list', 'you insert and delete often and rarely read by position']
+];
+
+/* ---------------- shared bits ---------------- */
+function btn(text, fn, cls){ return el('button',{type:'button',class:'btn '+(cls||''),onclick:fn,text:text}); }
+function field(id, label, val, type, w){
+  var input = el('input',{id:id,type:type||'text',value:val,'aria-label':label,autocomplete:'off',style:w?('width:'+w+'px'):null});
+  return {wrap: el('label',{class:'fld','for':id}, el('span',{text:label}), input), input: input};
+}
+function num(input, def){ var n = parseInt(input.value,10); return isNaN(n) ? def : n; }
+function onEnter(input, fn){ input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); fn(); } }); }
+function shell(host){
+  var bar = el('div',{class:'vbar'}), stage = el('div',{class:'stage'}), log = el('p',{class:'vlog','aria-live':'polite'});
+  var gk = el('button',{type:'button',class:'btn sm grok-only vask',text:'Ask AI about this'});
+  gk.addEventListener('click', function(){ askAbout('In the '+topicName()+' visualizer I just saw this: "'+log.textContent+'" Explain what happened and why, in simple terms.'); });
+  host.append(bar, stage, log, gk);
+  var busy = false;
+  function setDis(v){ bar.querySelectorAll('button,input,select').forEach(function(x){ x.disabled = v; }); }
+  return {
+    bar: bar, stage: stage,
+    say: function(t){ log.textContent = t; },
+    lock: function(fn){
+      return async function(){
+        if (busy) return;
+        busy = true; setDis(true);
+        var e = epoch, args = arguments;
+        try { await fn.apply(null, args); } catch(err){ if (err !== ABORT) console.error(err); }
+        busy = false;
+        if (e === epoch) setDis(false);
+      };
+    }
+  };
+}
+function plural(n, w){ return n + ' ' + w + (n === 1 ? '' : 's'); }
+
+/* ---------------- visualizers ---------------- */
+function vizArray(host){
+  var ui = shell(host), a = [4,9,2,7,5];
+  var v = field('av','Value','8','number',80), ix = field('ai','Index','1','number',80);
+  function draw(hi, ok){
+    hi = hi || [], ok = ok || [];
+    ui.stage.replaceChildren(el('div',{class:'arr'}, a.map(function(x,i){
+      return el('div',{class:'slot'}, el('div',{class:'cell'+(hi.indexOf(i)>-1?' hi':'')+(ok.indexOf(i)>-1?' ok':''),text:x}), el('small',{text:i}));
+    })));
+  }
+  var append = function(){
+    if (a.length >= 12) return ui.say('The demo array holds 12 items. Remove some first.');
+    var x = num(v.input,8); a.push(x); draw([a.length-1]);
+    ui.say('append('+x+'): wrote into the next free slot. No shifting, so O(1) (amortized).');
+  };
+  var insert = ui.lock(async function(){
+    if (a.length >= 12) return ui.say('The demo array holds 12 items. Remove some first.');
+    var x = num(v.input,8), i = Math.max(0, Math.min(a.length, num(ix.input,0))), n = a.length;
+    for (var j = n-1; j >= i; j--){ draw([j]); ui.say('Shifting index '+j+' one place right to open a gap at '+i+'...'); await wait(240); }
+    a.splice(i,0,x); draw([i]);
+    ui.say('insert('+i+', '+x+'): shifted '+plural(n-i,'item')+'. The closer to the front, the more work: O(n).');
+  });
+  var del = ui.lock(async function(){
+    var i = num(ix.input,0), n = a.length;
+    if (i < 0 || i >= n) return ui.say('Index '+i+' is out of range. Valid indexes are 0 to '+(n-1)+'.');
+    var x = a[i];
+    for (var j = i+1; j < n; j++){ draw([j]); ui.say('Shifting index '+j+' one place left to close the gap...'); await wait(240); }
+    a.splice(i,1); draw();
+    ui.say('delete('+i+') removed '+x+' and shifted '+plural(n-1-i,'item')+' left: O(n).');
+  });
+  var find = ui.lock(async function(){
+    var x = num(v.input,8);
+    for (var j = 0; j < a.length; j++){
+      draw([j]); ui.say('Comparing index '+j+' with '+x+'...'); await wait(280);
+      if (a[j] === x){ draw([],[j]); return ui.say('Found '+x+' at index '+j+' after '+plural(j+1,'comparison')+'. Linear search is O(n).'); }
+    }
+    draw(); ui.say(x+' is not in the array. That took '+plural(a.length,'comparison')+', the worst case.');
+  });
+  ui.bar.append(v.wrap, ix.wrap, btn('Append',append,'pri'), btn('Insert at index',insert), btn('Delete at index',del), btn('Find value',find));
+  onEnter(v.input, append);
+  draw(); ui.say('Try inserting at index 0, then at the end, and compare how many items shift.');
+}
+
+function vizList(host){
+  var ui = shell(host), a = [12,7,30];
+  var v = field('lv','Value','5','number',80);
+  function draw(hi, ok){
+    hi = hi || [], ok = ok || [];
+    var kids = [el('span',{class:'ltag',text:'head'}), el('span',{class:'arrow',text:'→'})];
+    a.forEach(function(x,i){
+      kids.push(el('div',{class:'lnode'+(hi.indexOf(i)>-1?' hi':'')+(ok.indexOf(i)>-1?' ok':'')}, el('span',{text:x}), el('i')));
+      kids.push(el('span',{class:'arrow',text:'→'}));
+    });
+    kids.push(el('span',{class:'ltag',text:'null'}));
+    ui.stage.replaceChildren(el('div',{class:'lrow'}, kids));
+  }
+  function full(){ if (a.length >= 8){ ui.say('The demo list holds 8 nodes. Delete one first.'); return true; } return false; }
+  var head = function(){
+    if (full()) return;
+    var x = num(v.input,5); a.unshift(x); draw([0]);
+    ui.say('push_front('+x+'): new node points at the old head, then head moves. Two pointer changes, O(1).');
+  };
+  var tail = ui.lock(async function(){
+    if (full()) return;
+    var x = num(v.input,5);
+    for (var j = 0; j < a.length; j++){ draw([j]); ui.say('Walking to the end: at node '+(j+1)+' of '+a.length+'...'); await wait(260); }
+    a.push(x); draw([a.length-1]);
+    ui.say('Appended '+x+' after walking '+plural(a.length-1,'node')+'. Without a tail pointer this is O(n).');
+  });
+  var del = ui.lock(async function(){
+    var x = num(v.input,5);
+    for (var j = 0; j < a.length; j++){
+      draw([j]); ui.say('Looking at node '+(j+1)+' ('+a[j]+')...'); await wait(280);
+      if (a[j] === x){ a.splice(j,1); draw(); return ui.say('Deleted '+x+' by pointing the previous node past it. Finding it took '+plural(j+1,'step')+'; unlinking was O(1).'); }
+    }
+    draw(); ui.say(x+' is not in the list after '+plural(a.length,'step')+'.');
+  });
+  var find = ui.lock(async function(){
+    var x = num(v.input,5);
+    for (var j = 0; j < a.length; j++){
+      draw([j]); ui.say('Following next pointer to node '+(j+1)+'...'); await wait(280);
+      if (a[j] === x){ draw([],[j]); return ui.say('Found '+x+' after visiting '+plural(j+1,'node')+'. No jumping: O(n).'); }
+    }
+    draw(); ui.say(x+' not found after visiting all '+a.length+' nodes.');
+  });
+  ui.bar.append(v.wrap, btn('Insert at head',head,'pri'), btn('Insert at tail',tail), btn('Delete value',del), btn('Find value',find));
+  onEnter(v.input, head);
+  draw(); ui.say('Compare inserting at the head with inserting at the tail.');
+}
+
+function vizStack(host){
+  var ui = shell(host), items = [4,9,2];
+  var v = field('sv','Value','7','number',80);
+  function draw(hi){
+    ui.stage.replaceChildren(el('div',{class:'stackbox'},
+      el('div',{class:'cap',text:'top'}),
+      el('div',{class:'col'}, items.length ? items.map(function(x,i){ return el('div',{class:'cell'+(i===hi?' hi':''),text:x}); }) : el('div',{class:'empty',text:'empty'})),
+      el('div',{class:'cap',text:'bottom'})));
+  }
+  var push = function(){
+    if (items.length >= 8) return ui.say('The demo stack holds 8 items. Pop one first.');
+    var x = num(v.input,7); items.push(x); draw(items.length-1);
+    ui.say('push('+x+'): placed on top. One step, O(1).');
+  };
+  var pop = function(){
+    if (!items.length) return ui.say('pop() on an empty stack. Real code must check first or raise an error (underflow).');
+    var x = items.pop(); draw();
+    ui.say('pop() returned '+x+', the item pushed most recently. One step, O(1).');
+  };
+  var peek = function(){
+    if (!items.length) return ui.say('Nothing to peek at: the stack is empty.');
+    draw(items.length-1); ui.say('peek() = '+items[items.length-1]+'. Reads the top without removing it, O(1).');
+  };
+  ui.bar.append(v.wrap, btn('Push',push,'pri'), btn('Pop',pop), btn('Peek',peek));
+  onEnter(v.input, push);
+  draw(); ui.say('Push a few values, then pop. They come back in reverse order.');
+}
+
+function vizQueue(host){
+  var ui = shell(host), items = [4,9,2];
+  var v = field('qv','Value','7','number',80);
+  function draw(hi){
+    ui.stage.replaceChildren(el('div',{class:'qrow'}, items.length ? items.map(function(x,i){
+      var lab = items.length === 1 ? 'front / back' : (i===0 ? 'front' : (i===items.length-1 ? 'back' : ''));
+      return el('div',{class:'slot'}, el('div',{class:'cell'+(i===hi?' hi':''),text:x}), el('small',{text:lab||'\u00a0'}));
+    }) : el('div',{class:'empty',text:'empty'})));
+  }
+  var enq = function(){
+    if (items.length >= 8) return ui.say('The demo queue holds 8 items. Dequeue one first.');
+    var x = num(v.input,7); items.push(x); draw(items.length-1);
+    ui.say('enqueue('+x+'): joined at the back. O(1).');
+  };
+  var deq = function(){
+    if (!items.length) return ui.say('dequeue() on an empty queue. Real code must check first (underflow).');
+    var x = items.shift(); draw();
+    ui.say('dequeue() returned '+x+', the item that waited longest. O(1) with a deque (a plain Python list.pop(0) would be O(n)).');
+  };
+  var peek = function(){
+    if (!items.length) return ui.say('Nothing at the front: the queue is empty.');
+    draw(0); ui.say('front() = '+items[0]+'. Next in line, O(1).');
+  };
+  ui.bar.append(v.wrap, btn('Enqueue',enq,'pri'), btn('Dequeue',deq), btn('Peek front',peek));
+  onEnter(v.input, enq);
+  draw(); ui.say('Enqueue a few values, then dequeue. They leave in arrival order.');
+}
+
+function vizBST(host){
+  var ui = shell(host), root = null, count = 0;
+  var v = field('bv','Key','45','number',80);
+  function ins(k){
+    var n = {v:k,l:null,r:null}, path = [];
+    if (!root){ root = n; count++; return {path:path, added:true}; }
+    var c = root;
+    while (true){
+      path.push(c.v);
+      if (k === c.v) return {path:path, added:false};
+      if (k < c.v){ if (!c.l){ c.l = n; break; } c = c.l; }
+      else { if (!c.r){ c.r = n; break; } c = c.r; }
+    }
+    count++; return {path:path, added:true};
+  }
+  function reset(list){ root = null; count = 0; list.forEach(ins); }
+  function height(n){ return n ? 1 + Math.max(height(n.l), height(n.r)) : 0; }
+  function layout(){
+    var pos = new Map(), i = 0;
+    (function go(n,d){ if (!n) return; go(n.l,d+1); pos.set(n,{x:i++,y:d}); go(n.r,d+1); })(root,0);
+    return pos;
+  }
+  function draw(hi, ok){
+    hi = hi || [], ok = ok || [];
+    if (!root){ ui.stage.replaceChildren(el('div',{class:'empty',text:'empty tree'})); return; }
+    var pos = layout(), h = height(root), W = count*40+40, H = h*54+24;
+    var svg = sv('svg',{class:'tree',viewBox:'0 0 '+W+' '+H,width:W,height:H,role:'img','aria-label':'Binary search tree'});
+    pos.forEach(function(p,n){
+      [n.l,n.r].forEach(function(c){
+        if (!c) return; var q = pos.get(c);
+        svg.append(sv('line',{class:'edge'+((hi.indexOf(n.v)>-1&&hi.indexOf(c.v)>-1)?' on':''),x1:30+p.x*40,y1:26+p.y*54,x2:30+q.x*40,y2:26+q.y*54}));
+      });
+    });
+    pos.forEach(function(p,n){
+      svg.append(sv('g',{class:'node'+(hi.indexOf(n.v)>-1?' hi':'')+(ok.indexOf(n.v)>-1?' ok':'')}, sv('circle',{cx:30+p.x*40,cy:26+p.y*54,r:17}), sv('text',{x:30+p.x*40,y:26+p.y*54},n.v)));
+    });
+    ui.stage.replaceChildren(el('div',{class:'below'}, svg, el('div',{class:'ord',id:'ord'})));
+  }
+  function ord(label, list){ var o = $('#ord'); if (o) o.replaceChildren(el('b',{text:label+': '}), list.join(', ')); }
+  var insert = ui.lock(async function(){
+    var k = num(v.input,45);
+    if (count >= 15) return ui.say('The demo tree holds 15 keys. Reset to start over.');
+    var r = ins(k), shown = [];
+    for (var i = 0; i < r.path.length; i++){ shown.push(r.path[i]); }
+    if (!r.added){ draw(shown,[k]); return ui.say(k+' is already in the tree, so nothing changes.'); }
+    draw(shown.concat([k])); await wait(60);
+    ui.say('insert('+k+'): compared with '+plural(r.path.length,'node')+' on the way down ('+r.path.join(' → ')+'), then attached as a new leaf. Height is now '+height(root)+'.');
+  });
+  var search = ui.lock(async function(){
+    var k = num(v.input,45), c = root, path = [];
+    while (c){
+      path.push(c.v); draw(path.slice());
+      ui.say('Compare '+k+' with '+c.v+(k===c.v?': match.':(k<c.v?': smaller, go left.':': larger, go right.'))); await wait(450);
+      if (k === c.v){ draw(path.slice(0,-1),[k]); return ui.say('Found '+k+' after '+plural(path.length,'comparison')+'. A tree of height '+height(root)+' needs at most '+height(root)+'.'); }
+      c = k < c.v ? c.l : c.r;
+    }
+    draw(path); ui.say(k+' is not in the tree. We fell off a leaf after '+plural(path.length,'comparison')+'.');
+  });
+  function walk(kind){
+    return ui.lock(async function(){
+      var out = [];
+      (function go(n){
+        if (!n) return;
+        if (kind==='pre') out.push(n.v);
+        go(n.l);
+        if (kind==='in') out.push(n.v);
+        go(n.r);
+        if (kind==='post') out.push(n.v);
+      })(root);
+      if (kind==='level'){
+        out = []; var q = root ? [root] : [];
+        while (q.length){ var n = q.shift(); out.push(n.v); if (n.l) q.push(n.l); if (n.r) q.push(n.r); }
+      }
+      var names = {in:'In-order',pre:'Pre-order',post:'Post-order',level:'Level-order'};
+      var hint = {in:'left, node, right. Sorted!',pre:'node, left, right.',post:'left, right, node.',level:'row by row, using a queue.'};
+      for (var i = 0; i < out.length; i++){ draw([],out.slice(0,i+1)); ord(names[kind], out.slice(0,i+1)); await wait(320); }
+      ui.say(names[kind]+' visits '+hint[kind]+' All n nodes: O(n).');
+    });
+  }
+  var skew = function(){ reset([10,20,30,40,50]); draw(); ui.say('Sorted inserts made a chain of height 5. Searching for 50 now takes 5 comparisons, so it is O(n). Self-balancing trees prevent this.'); };
+  var rs = function(){ reset([50,30,70,20,40,60,80]); draw(); ui.say('A balanced tree with 7 keys has height 3, so any search needs at most 3 comparisons.'); };
+  ui.bar.append(v.wrap, btn('Insert',insert,'pri'), btn('Search',search), btn('In-order',walk('in')), btn('Pre-order',walk('pre')), btn('Post-order',walk('post')), btn('Level-order',walk('level')), btn('Skew demo',skew), btn('Reset',rs));
+  onEnter(v.input, insert);
+  rs(); ui.say('Insert a few keys, search for one, then run the skew demo to see the worst case.');
+}
+
+function vizHeap(host){
+  var ui = shell(host), a = [];
+  var v = field('hv','Value','6','number',80);
+  function build(list){ a = []; list.forEach(function(x){ a.push(x); var i = a.length-1; while (i>0 && a[(i-1)>>1] > a[i]){ var p=(i-1)>>1; var t=a[i]; a[i]=a[p]; a[p]=t; i=p; } }); }
+  function draw(hi){
+    hi = hi || [];
+    var W = 520, lv = a.length ? Math.floor(Math.log2(a.length))+1 : 1, H = lv*54+20;
+    var pos = a.map(function(_,i){ var l = Math.floor(Math.log2(i+1)), k = i-(Math.pow(2,l)-1); return {x:(k+.5)/Math.pow(2,l)*W, y:26+l*54}; });
+    var svg = sv('svg',{class:'tree',viewBox:'0 0 '+W+' '+H,width:W,height:H,role:'img','aria-label':'Min-heap as a tree'});
+    a.forEach(function(_,i){ if (i>0){ var p=(i-1)>>1; svg.append(sv('line',{class:'edge',x1:pos[p].x,y1:pos[p].y,x2:pos[i].x,y2:pos[i].y})); } });
+    a.forEach(function(x,i){ svg.append(sv('g',{class:'node'+(hi.indexOf(i)>-1?' hi':'')}, sv('circle',{cx:pos[i].x,cy:pos[i].y,r:17}), sv('text',{x:pos[i].x,y:pos[i].y},x))); });
+    var row = el('div',{class:'arr'}, a.map(function(x,i){ return el('div',{class:'slot'}, el('div',{class:'cell'+(hi.indexOf(i)>-1?' hi':''),text:x}), el('small',{text:i})); }));
+    ui.stage.replaceChildren(el('div',{class:'below'}, a.length ? svg : el('div',{class:'empty',text:'empty heap'}), a.length ? row : null));
+  }
+  var insert = ui.lock(async function(){
+    if (a.length >= 15) return ui.say('The demo heap holds 15 items. Extract some first.');
+    var x = num(v.input,6); a.push(x); var i = a.length-1, swaps = 0;
+    draw([i]); ui.say('Added '+x+' at the end of the array (index '+i+'). Now bubble it up while it is smaller than its parent.'); await wait(500);
+    while (i > 0 && a[(i-1)>>1] > a[i]){
+      var p = (i-1)>>1; draw([i,p]); ui.say(a[i]+' < parent '+a[p]+': swap.'); await wait(500);
+      var t = a[i]; a[i] = a[p]; a[p] = t; i = p; swaps++; draw([i]); await wait(300);
+    }
+    draw(); ui.say('insert('+x+') finished with '+plural(swaps,'swap')+'. At most one swap per level, so O(log n).');
+  });
+  var extract = ui.lock(async function(){
+    if (!a.length) return ui.say('The heap is empty.');
+    var top = a[0], last = a.pop(), swaps = 0;
+    if (!a.length){ draw(); return ui.say('extract_min() returned '+top+'. The heap is now empty.'); }
+    a[0] = last; draw([0]); ui.say('Removed the minimum ('+top+'). Moved the last item ('+last+') to the root. Now sift it down.'); await wait(600);
+    var i = 0;
+    while (true){
+      var l = 2*i+1, r = 2*i+2, m = i;
+      if (l < a.length && a[l] < a[m]) m = l;
+      if (r < a.length && a[r] < a[m]) m = r;
+      if (m === i) break;
+      draw([i,m]); ui.say('Swap '+a[i]+' with its smaller child '+a[m]+'.'); await wait(550);
+      var t = a[i]; a[i] = a[m]; a[m] = t; i = m; swaps++; draw([i]); await wait(300);
+    }
+    draw(); ui.say('extract_min() returned '+top+' after '+plural(swaps,'swap')+'. At most the height of the tree: O(log n).');
+  });
+  var peek = function(){ if (!a.length) return ui.say('The heap is empty.'); draw([0]); ui.say('peek() = '+a[0]+'. The minimum is always at index 0: O(1).'); };
+  var rs = function(){ build([3,9,5,14,12,8,7]); draw(); ui.say('Insert 1 and watch it rise to the root. Then extract the minimum and watch the root get replaced.'); };
+  ui.bar.append(v.wrap, btn('Insert',insert,'pri'), btn('Extract min',extract), btn('Peek',peek), btn('Reset',rs));
+  onEnter(v.input, insert);
+  rs();
+}
+
+function vizHash(host){
+  var ui = shell(host), m = 7, table = [];
+  var k = field('hk','Key','fox','text',110);
+  function h(key){ var s = 0; for (var i = 0; i < key.length; i++) s += key.charCodeAt(i); return s % m; }
+  function expr(key){ var codes = []; for (var i = 0; i < key.length; i++) codes.push(key.charCodeAt(i)); return 'hash("'+key+'") = ('+codes.join(' + ')+') mod '+m+' = '+h(key); }
+  function init(mm, keys){ m = mm; table = []; for (var i = 0; i < m; i++) table.push([]); keys.forEach(function(x){ table[h(x)].push(x); }); }
+  function count(){ return table.reduce(function(s,c){ return s + c.length; }, 0); }
+  function draw(hiB, hiK){
+    var rows = table.map(function(chain,i){
+      return el('div',{class:'brow'}, el('b',{text:i}), el('div',{class:'chain'}, chain.map(function(x){
+        return el('div',{class:'cell'+(hiB===i && hiK===x?' ok':(hiB===i?' hi':'')),text:x});
+      })));
+    });
+    ui.stage.replaceChildren(el('div',{class:'below'}, el('div',{class:'buckets'}, rows), el('div',{class:'ord',text:'items '+count()+' / buckets '+m+' = load factor '+(count()/m).toFixed(2)})));
+  }
+  function key(){ return (k.input.value || '').trim().slice(0,8); }
+  var insert = ui.lock(async function(){
+    var x = key(); if (!x) return ui.say('Type a key first.');
+    if (count() >= 20) return ui.say('The demo table holds 20 keys. Reset to start over.');
+    var b = h(x); draw(b); ui.say(expr(x)+'. Jump to bucket '+b+'.'); await wait(700);
+    if (table[b].indexOf(x) > -1){ draw(b,x); return ui.say('"'+x+'" is already stored in bucket '+b+'.'); }
+    var collided = table[b].length > 0; table[b].push(x); draw(b,x);
+    var extra = count()/m > 0.75 ? ' Load factor is above 0.75, so a real table would resize now. Try Resize.' : '';
+    ui.say('Stored "'+x+'" in bucket '+b+'.'+(collided?' That bucket already had '+plural(table[b].length-1,'key')+': a collision, handled by chaining.':' O(1).')+extra);
+  });
+  var look = ui.lock(async function(){
+    var x = key(); if (!x) return ui.say('Type a key first.');
+    var b = h(x); draw(b); ui.say(expr(x)+'. Go straight to bucket '+b+'.'); await wait(700);
+    var chain = table[b];
+    for (var i = 0; i < chain.length; i++){
+      draw(b,chain[i]===x?x:null); ui.say('Checking '+(i+1)+' of '+chain.length+' in the chain: "'+chain[i]+'"'+(chain[i]===x?' matches.':'.')); await wait(500);
+      if (chain[i] === x) return ui.say('Found "'+x+'" after '+plural(i+1,'comparison')+' inside one bucket. Short chains keep this O(1).');
+    }
+    ui.say('"'+x+'" is not in the table. Only bucket '+b+' needed checking, not all '+count()+' keys.');
+  });
+  var resize = ui.lock(async function(){
+    if (m >= 28) return ui.say('Already at the largest demo size (28 buckets).');
+    var all = []; table.forEach(function(c){ c.forEach(function(x){ all.push(x); }); });
+    ui.say('Doubling buckets from '+m+' to '+(m*2)+' and rehashing every key...'); await wait(600);
+    init(m*2, all); draw();
+    ui.say('Resized to '+m+' buckets. Every key was rehashed, an O(n) step that happens rarely, so inserts stay O(1) amortized.');
+  });
+  var rs = function(){ init(7, ['cat','dog','sun','map','owl']); draw(); ui.say('Try inserting "fox", looking up "sun" (it collides with "dog"), then resize.'); };
+  ui.bar.append(k.wrap, btn('Insert',insert,'pri'), btn('Look up',look), btn('Resize ×2',resize), btn('Reset',rs));
+  onEnter(k.input, insert);
+  rs();
+}
+
+function vizGraph(host){
+  var ui = shell(host);
+  var P = {A:[50,120],B:[150,45],C:[150,195],D:[260,45],E:[260,195],F:[355,120],G:[205,120]};
+  var E = [['A','B'],['A','C'],['B','D'],['C','E'],['D','F'],['E','F'],['B','G'],['C','G']];
+  var adj = {}; Object.keys(P).forEach(function(n){ adj[n] = []; });
+  E.forEach(function(e){ adj[e[0]].push(e[1]); adj[e[1]].push(e[0]); });
+  Object.keys(adj).forEach(function(n){ adj[n].sort(); });
+  var sel = el('select',{id:'gs','aria-label':'Start vertex'}, Object.keys(P).map(function(n){ return el('option',{value:n,text:n}); }));
+  function draw(vis, cur, fr, label, front, order){
+    vis = vis || [], fr = fr || [];
+    var svg = sv('svg',{class:'tree',viewBox:'0 0 410 240',width:410,height:240,role:'img','aria-label':'Sample graph'});
+    E.forEach(function(e){ svg.append(sv('line',{class:'edge'+((vis.indexOf(e[0])>-1&&vis.indexOf(e[1])>-1)?' on':''),x1:P[e[0]][0],y1:P[e[0]][1],x2:P[e[1]][0],y2:P[e[1]][1]})); });
+    Object.keys(P).forEach(function(n){
+      var c = 'node'+(vis.indexOf(n)>-1?' vis':'')+(fr.indexOf(n)>-1?' fr':'')+(cur===n?' cur':'');
+      svg.append(sv('g',{class:c}, sv('circle',{cx:P[n][0],cy:P[n][1],r:18}), sv('text',{x:P[n][0],y:P[n][1]},n)));
+    });
+    ui.stage.replaceChildren(el('div',{class:'gwrap'}, svg, el('div',{class:'gpanels'},
+      el('span',{}, (label||'frontier')+': ', el('b',{text:'['+(front||[]).join(', ')+']'})),
+      el('span',{}, 'visit order: ', el('b',{text:(order||[]).join(' → ')||'none yet'})))));
+  }
+  function run(kind){
+    return ui.lock(async function(){
+      var s = sel.value, order = [], seen = {}, front = [s], label = kind==='bfs' ? 'queue' : 'stack';
+      if (kind==='bfs') seen[s] = true;
+      draw([],null,front,label,front,order); ui.say('Start at '+s+'. '+(kind==='bfs'?'Put it in the queue.':'Put it on the stack.')); await wait(600);
+      while (front.length){
+        var cur = kind==='bfs' ? front.shift() : front.pop();
+        if (kind==='dfs' && seen[cur]) continue;
+        seen[cur] = true; order.push(cur);
+        var nbs = adj[cur].filter(function(n){ return !seen[n]; });
+        if (kind==='bfs') nbs.forEach(function(n){ seen[n] = true; front.push(n); });
+        else nbs.slice().reverse().forEach(function(n){ front.push(n); });
+        draw(order.slice(0,-1), cur, front, label, front, order);
+        ui.say((kind==='bfs'?'Dequeued ':'Popped ')+cur+'. '+(nbs.length?(kind==='bfs'?'Queued ':'Pushed ')+'its unvisited neighbours '+nbs.join(', ')+'.':'No unvisited neighbours.')); await wait(850);
+      }
+      draw(order,null,[],label,[],order);
+      ui.say((kind==='bfs'?'BFS':'DFS')+' visited '+order.length+' vertices: '+order.join(' → ')+'. '+(kind==='bfs'?'BFS spreads in rings: B and C (one edge from A) come before D, E and G.':'DFS dived deep first before backing up.')+' Each vertex and edge is handled once: O(V + E).');
+    });
+  }
+  var rs = function(){ draw(); ui.say('Pick a start vertex and run BFS, then DFS, and compare the visit orders.'); };
+  ui.bar.append(el('label',{class:'fld','for':'gs'}, el('span',{text:'Start'}), sel), btn('Run BFS',run('bfs'),'pri'), btn('Run DFS',run('dfs')), btn('Reset',rs));
+  rs();
+}
+
+var VIZ = {array:vizArray,'linked-list':vizList,stack:vizStack,queue:vizQueue,bst:vizBST,heap:vizHeap,hash:vizHash,graph:vizGraph};
+
+/* ---------------- state ---------------- */
+var grok = {state:'checking', model:'', provider:''};
+var lastTopic = 'stack', built = null, view = 'topic';
+var chat = {msgs:[], busy:false, ctl:null};
+function topicName(){ return BY[lastTopic] ? BY[lastTopic].name : 'data structures'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------------- topic page ---------------- */
+function cxClass(s){ return /O\(1\)/.test(s) ? 'c1' : (/log/.test(s) ? 'c2' : 'c3'); }
+function cxTable(rows){
+  return el('div',{class:'tbl'}, el('table',{},
+    el('thead',{}, el('tr',{}, el('th',{text:'Operation'}), el('th',{text:'Average'}), el('th',{text:'Worst'}))),
+    el('tbody',{}, rows.map(function(r){
+      return el('tr',{}, el('td',{text:r[0]}), el('td',{class:'cx '+cxClass(r[1]),text:r[1]}), el('td',{class:'cx '+cxClass(r[2]),text:r[2]}));
+    }))));
+}
+function hl(src){
+  var kw = /\b(def|class|return|if|elif|else|while|for|in|not|and|or|is|None|self|import|from|raise|break|continue|True|False|lambda)\b/;
+  var re = new RegExp('(#.*$)|("[^"\\n]*"|\'[^\'\\n]*\')|'+kw.source, 'gm');
+  return esc(src).replace(re, function(m,c,s){
+    return c ? '<span class="c">'+m+'</span>' : (s ? '<span class="s">'+m+'</span>' : '<span class="k">'+m+'</span>');
+  });
+}
+function card(i, title, content){ return el('div',{class:'card',style:'--i:'+i}, el('h3',{text:title}), content); }
+function renderLearn(t){
+  return el('div',{class:'learn'},
+    el('div',{class:'prose'},
+      t.explain.map(function(p){ return el('p',{text:p}); }),
+      el('div',{class:'analogy'}, el('b',{text:'Think of it as'}), t.analogy),
+      el('div',{class:'row grok-only'}, btn('Explain it another way', function(){ openChat('Explain '+t.name+' another way, with a fresh everyday example.', true); }, 'sm'))),
+    el('div',{class:'side'},
+      card(0,'Complexity', cxTable(t.cx)),
+      card(1,'Reach for it when', el('ul',{}, t.use.map(function(u){ return el('li',{text:u}); }))),
+      card(2,'Watch out for', el('ul',{}, t.watch.map(function(u){ return el('li',{text:u}); })))));
+}
+function renderCode(t){
+  var pre = el('pre',{class:'code'}); pre.innerHTML = hl(t.code);
+  var cb = el('button',{type:'button',class:'btn sm',text:'Copy'});
+  cb.addEventListener('click', async function(){
+    try { await navigator.clipboard.writeText(t.code); cb.textContent = 'Copied'; }
+    catch(e){ var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); cb.textContent = 'Selected, press Ctrl+C'; }
+    setTimeout(function(){ cb.textContent = 'Copy'; }, 1800);
+  });
+  return el('div',{}, el('div',{class:'codehead'}, el('span',{text:'Python 3'}), el('div',{class:'row'}, btn('Review with AI', function(){ openChat('Review this '+t.name+' implementation. Point out any bug or edge case I should handle, and explain the complexity of each method.\n\n```python\n'+t.code+'\n```', true); }, 'sm grok-only'), cb)), pre);
+}
+function renderQuiz(t){
+  var host = el('div',{class:'quiz'}), qs = t.quiz, custom = false, i = 0, score = 0, key = 'structura-best-'+t.id;
+  function ask(){
+    var q = qs[i], done = false;
+    var why = el('div',{class:'why',hidden:true}), next = btn(i === qs.length-1 ? 'See score' : 'Next question', function(){ i++; i < qs.length ? ask() : finish(); }, 'pri');
+    next.hidden = true;
+    var opts = q.o.map(function(txt, n){
+      var b = el('button',{type:'button',class:'opt',text:txt});
+      b.addEventListener('click', function(){
+        if (done) return; done = true;
+        if (n === q.a) score++;
+        opts.forEach(function(x,j){ x.disabled = true; if (j === q.a) x.classList.add('right'); else if (j === n) x.classList.add('wrong'); });
+        why.textContent = (n === q.a ? 'Correct. ' : 'Not quite. ') + q.w; why.hidden = false; next.hidden = false;
+      });
+      return b;
+    });
+    host.replaceChildren(el('div',{class:'meta',text:'Question '+(i+1)+' of '+qs.length+(custom?' · written by AI':'')}), el('h3',{text:q.q}), el('div',{}, opts), why, next);
+  }
+  function finish(){
+    var best = parseInt(store.get(key),10) || 0;
+    if (!custom){ if (score > best){ best = score; store.set(key, String(score)); } }
+    var note = el('p',{class:'note'});
+    var more = btn('New questions from AI', async function(){
+      more.disabled = true; note.textContent = 'Asking the AI to write three new questions...';
+      try {
+        var res = await fetch('/api/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:t.id,count:3,avoid:t.quiz.map(function(x){ return x.q; })})});
+        var j = await res.json().catch(function(){ return {}; });
+        if (!res.ok || !j.questions || !j.questions.length) throw new Error(j.error || 'The AI did not return usable questions. Try again.');
+        qs = j.questions; custom = true; i = 0; score = 0; ask();
+      } catch(e){ note.textContent = e.message; more.disabled = false; }
+    }, 'grok-only');
+    host.replaceChildren(el('div',{class:'meta',text:'Result'}), el('div',{class:'score',text:score+' / '+qs.length}),
+      el('p',{text: score === qs.length ? 'Full marks. Try the visualizer on a trickier case, or move to the next topic.' : 'Review the Learn tab, then retry.'+(custom?'':' Best on this device: '+best+' / '+qs.length+'.')}),
+      el('div',{class:'row'}, btn('Retry', function(){ i = 0; score = 0; ask(); }, 'pri'), more), note);
+  }
+  ask(); return host;
+}
+
+function markNav(id){ document.querySelectorAll('#nav button').forEach(function(b){ b.setAttribute('aria-current', b.dataset.id === id ? 'true' : 'false'); }); }
+function placeThumb(instant){
+  var B = built; if (!B || !B.tab) return;
+  var b = B.btns[B.tab]; if (!b) return;
+  if (instant) B.thumb.classList.add('noanim');
+  B.thumb.style.width = b.offsetWidth+'px';
+  B.thumb.style.transform = 'translateX('+b.offsetLeft+'px)';
+  if (instant){ void B.thumb.offsetWidth; B.thumb.classList.remove('noanim'); }
+}
+function buildTopic(t){
+  var tabs = [['learn','Learn'],['viz','Visualize'],['code','Code'],['quiz','Quiz']];
+  var thumb = el('span',{class:'thumb','aria-hidden':'true'}), seg = el('div',{class:'seg',role:'tablist'}, thumb), btns = {};
+  tabs.forEach(function(x){
+    var b = el('button',{type:'button',role:'tab',text:x[1]});
+    b.addEventListener('click', function(){ setTab(x[0]); });
+    btns[x[0]] = b; seg.append(b);
+  });
+  var panel = el('div',{class:'panel'});
+  var root = el('div',{class:'enter'}, el('div',{class:'thead'}, el('h2',{text:t.name}), el('span',{class:'tag',text:t.tag}), el('p',{text:t.tagline})), seg, panel);
+  $('#topic').replaceChildren(root);
+  built = {id:t.id, t:t, thumb:thumb, btns:btns, panel:panel, tab:null, placed:false};
+}
+function setTab(which){
+  var B = built, t = B.t; epoch++;
+  B.tab = which;
+  Object.keys(B.btns).forEach(function(k){ B.btns[k].setAttribute('aria-selected', k === which ? 'true' : 'false'); });
+  placeThumb(!B.placed); B.placed = true;
+  B.panel.classList.remove('enter'); void B.panel.offsetWidth; B.panel.classList.add('enter');
+  B.panel.replaceChildren();
+  if (which === 'learn') B.panel.append(renderLearn(t));
+  else if (which === 'viz') VIZ[t.id](B.panel);
+  else if (which === 'code') B.panel.append(renderCode(t));
+  else B.panel.append(renderQuiz(t));
+}
+function go(id, which){
+  if (id === 'chat') return showChat();
+  var t = BY[id]; if (!t) return;
+  epoch++; lastTopic = id; view = 'topic';
+  store.set('structura-topic', id);
+  markNav(id);
+  if (!built || built.id !== id) buildTopic(t);
+  setTab(which || 'learn');
+}
+addEventListener('resize', function(){ placeThumb(true); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ placeThumb(true); });
+
+/* ---------------- Grok chat ---------------- */
+function mdText(s){
+  var html = [];
+  function il(t){ return esc(t).replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>'); }
+  s.split(/\n{2,}/).forEach(function(b){
+    b = b.replace(/^\n+|\n+$/g,''); if (!b) return;
+    var lines = b.split('\n');
+    var isUl = lines.every(function(l){ return /^\s*[-*]\s+/.test(l); });
+    var isOl = lines.every(function(l){ return /^\s*\d+[.)]\s+/.test(l); });
+    if (isUl) html.push('<ul>'+lines.map(function(l){ return '<li>'+il(l.replace(/^\s*[-*]\s+/,''))+'</li>'; }).join('')+'</ul>');
+    else if (isOl) html.push('<ol>'+lines.map(function(l){ return '<li>'+il(l.replace(/^\s*\d+[.)]\s+/,''))+'</li>'; }).join('')+'</ol>');
+    else if (/^#{1,4}\s/.test(b)) html.push('<p><b>'+il(b.replace(/^#{1,4}\s+/,''))+'</b></p>');
+    else html.push('<p>'+lines.map(il).join('<br>')+'</p>');
+  });
+  return html.join('');
+}
+function md(s){
+  var out = '';
+  s.split('```').forEach(function(p,i){
+    if (i % 2 === 1){ var nl = p.indexOf('\n'); out += '<pre class="code">'+hl((nl > -1 ? p.slice(nl+1) : '').replace(/\n$/,''))+'</pre>'; }
+    else out += mdText(p);
+  });
+  return out;
+}
+function statusNode(){
+  var s = grok.state, text;
+  if (s === 'ready') text = 'Connected to '+(grok.provider || 'AI')+' · '+grok.model;
+  else if (s === 'nokey') text = 'Server found, but no API key yet. Add your key to the .env file and restart.';
+  else if (s === 'offline') text = 'Chat needs the local server, which this page cannot reach.';
+  else text = 'Checking connection...';
+  return el('div',{class:'status',id:'gstatus'}, el('span',{class:'dot '+s}), el('span',{text:text}));
+}
+function setupNode(){
+  return el('div',{class:'setup'}, el('h3',{text:'Turn on AI chat'}),
+    el('ol',{},
+      el('li',{text:'Put the project files (server.py and index.html) in one folder.'}),
+      el('li',{}, 'Copy ', el('code',{text:'.env.example'}), ' to ', el('code',{text:'.env'}), ' and paste your key on the matching line (xAI Grok or Groq).'),
+      el('li',{}, 'Run ', el('code',{text:'python3 server.py'}), ' in that folder.'),
+      el('li',{}, 'Open ', el('code',{text:'http://127.0.0.1:8000'}), '. The key stays in the server and never enters the page.')),
+    el('p',{class:'note',text:'The answer box at the top keeps working without any of this.'}));
+}
+function bubbleRow(role, text){
+  var bub = el('div',{class:'bubble'});
+  if (role === 'user') bub.textContent = text; else bub.innerHTML = md(text);
+  return {row: el('div',{class:'msg '+(role === 'user' ? 'user' : 'bot')}, bub), bub: bub};
+}
+function typingRow(){
+  var bub = el('div',{class:'bubble typing','aria-label':'The tutor is typing'}, el('i'), el('i'), el('i'));
+  return {row: el('div',{class:'msg bot'}, bub), bub: bub};
+}
+function toBottom(){ var l = $('#msgs'); if (l) l.scrollTop = l.scrollHeight; }
+function refreshComposer(){
+  var ta = $('#cin'), sb = $('#sendbtn'); if (!ta || !sb) return;
+  var ready = grok.state === 'ready';
+  ta.disabled = !ready;
+  ta.placeholder = ready ? 'Message your tutor' : 'Chat is off. See the setup steps above.';
+  sb.className = 'sendbtn'+(chat.busy ? ' stop' : '');
+  sb.disabled = !ready;
+  sb.replaceChildren(chat.busy
+    ? sv('svg',{width:14,height:14,viewBox:'0 0 24 24'}, sv('rect',{x:5,y:5,width:14,height:14,rx:3,fill:'currentColor'}))
+    : sv('svg',{width:18,height:18,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':2.4,'stroke-linecap':'round','stroke-linejoin':'round'}, sv('path',{d:'M12 19V5M5 12l7-7 7 7'})));
+  sb.setAttribute('aria-label', chat.busy ? 'Stop' : 'Send');
+  document.querySelectorAll('.qchips .chip').forEach(function(c){ c.disabled = !ready || chat.busy; });
+}
+async function sendMsg(text){
+  text = (text || '').trim();
+  if (!text || chat.busy || grok.state !== 'ready') return;
+  var um = {role:'user',content:text}, bot = {role:'assistant',content:''};
+  chat.msgs.push(um, bot);
+  var list = $('#msgs'), u = bubbleRow('user', text), b = typingRow();
+  if (list){ list.append(u.row, b.row); toBottom(); }
+  chat.busy = true; refreshComposer();
+  var ctl = new AbortController(); chat.ctl = ctl;
+  var started = false;
+  function paint(){
+    if (!started){ started = true; var r = bubbleRow('bot', bot.content); b.row.replaceWith(r.row); b = r; r.row.style.animation = 'none'; }
+    else b.bub.innerHTML = md(bot.content);
+    var l = $('#msgs'); if (l && l.scrollHeight - l.scrollTop - l.clientHeight < 140){ l.style.scrollBehavior = 'auto'; l.scrollTop = l.scrollHeight; l.style.scrollBehavior = ''; }
+  }
+  try {
+    var res = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctl.signal,
+      body:JSON.stringify({topic:lastTopic,messages:chat.msgs.slice(0,-1).slice(-20)})});
+    if (!res.ok){ var j = await res.json().catch(function(){ return {}; }); throw new Error(j.error || ('Request failed ('+res.status+')')); }
+    var rd = res.body.getReader(), dec = new TextDecoder(), buf = '';
+    for (;;){
+      var r = await rd.read(); if (r.done) break;
+      buf += dec.decode(r.value,{stream:true});
+      var lines = buf.split('\n'); buf = lines.pop();
+      for (var k = 0; k < lines.length; k++){
+        var ln = lines[k].trim(); if (ln.indexOf('data:') !== 0) continue;
+        var data = ln.slice(5).trim(); if (!data || data === '[DONE]') continue;
+        try {
+          var o = JSON.parse(data), d = o.choices && o.choices[0] && o.choices[0].delta && o.choices[0].delta.content;
+          if (d){ bot.content += d; paint(); }
+        } catch(e){}
+      }
+    }
+    if (!bot.content) throw new Error('The AI sent an empty reply. Try again.');
+  } catch(err){
+    if (err && err.name === 'AbortError'){
+      if (bot.content){ bot.content += '\n\n(stopped)'; paint(); }
+      else { chat.msgs.pop(); b.row.remove(); }
+    } else {
+      chat.msgs.pop();
+      var e = bubbleRow('bot', ''); e.bub.textContent = (err && err.message) || 'Something went wrong.'; e.row.classList.add('err');
+      b.row.replaceWith(e.row);
+    }
+  }
+  chat.busy = false; chat.ctl = null; refreshComposer();
+}
+function showChat(){
+  epoch++; built = null; view = 'chat';
+  markNav('chat');
+  var wrap = el('div',{class:'chat enter'});
+  var msgs = el('div',{class:'msgs',id:'msgs',role:'log','aria-live':'polite'});
+  var hello = bubbleRow('bot', 'Hi, I am your data structures tutor. Ask me anything, or paste code and I will review it. You are on **'+topicName()+'** right now, so I will keep that in mind.');
+  msgs.append(hello.row);
+  chat.msgs.forEach(function(m){ if (m.content || m.role === 'user') msgs.append(bubbleRow(m.role, m.content).row); });
+  var ta = el('textarea',{id:'cin',rows:'1','aria-label':'Message'});
+  var sb = el('button',{type:'button',id:'sendbtn',class:'sendbtn'});
+  function fit(){ ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight,130)+'px'; }
+  function submit(){
+    if (chat.busy){ if (chat.ctl) chat.ctl.abort(); return; }
+    var v = ta.value; ta.value = ''; fit(); sendMsg(v);
+  }
+  ta.addEventListener('input', fit);
+  ta.addEventListener('keydown', function(e){ if (e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); submit(); } });
+  sb.addEventListener('click', submit);
+  var n = topicName();
+  var quick = [
+    ['Explain simply', function(){ sendMsg('Explain '+n+' simply, with one everyday example.'); }],
+    ['New example', function(){ sendMsg('Give me a new worked example for '+n+' that I have not seen yet.'); }],
+    ['Quiz me', function(){ sendMsg('Quiz me on '+n+'. Ask one question at a time and wait for my answer before the next.'); }],
+    ['Trace it', function(){ sendMsg('Trace a short example of '+n+' step by step, showing the state after each step.'); }],
+    ['Review my code', function(){ var pre = 'Review this Python for correctness and time and space complexity:\n```python\n', post = '\n```'; ta.value = pre+post; fit(); ta.focus(); ta.setSelectionRange(pre.length, pre.length); }]
+  ].map(function(x){ var c = el('button',{type:'button',class:'chip',text:x[0]}); c.addEventListener('click', x[1]); return c; });
+  wrap.append(
+    el('div',{class:'thead'}, el('h2',{text:'Tutor chat'}), el('span',{class:'tag',text:'AI'}), el('p',{text:'Ask follow-ups, request a new example, or paste code to review. Replies stream in as they are written.'})),
+    statusNode(),
+    grok.state === 'ready' || grok.state === 'checking' ? null : setupNode(),
+    msgs, el('div',{class:'qchips'}, quick), el('div',{class:'composer'}, ta, sb));
+  $('#topic').replaceChildren(wrap);
+  refreshComposer(); toBottom();
+}
+function openChat(prefill, autosend){
+  showChat();
+  window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+  if (autosend && grok.state === 'ready'){ sendMsg(prefill); return; }
+  var ta = $('#cin'); if (ta){ ta.value = prefill || ''; ta.dispatchEvent(new Event('input')); if (!ta.disabled) ta.focus(); }
+}
+
+/* ---------------- offline answer engine ---------------- */
+function norm(s){ return ' '+s.toLowerCase().replace(/[^a-z0-9()+\-#\s]/g,' ').replace(/\s+/g,' ')+' '; }
+function findTopics(q){
+  var cand = [];
+  TOPICS.forEach(function(t){ t.words.forEach(function(w){ cand.push({id:t.id, w:w}); }); });
+  cand.sort(function(a,b){ return b.w.length - a.w.length; });
+  var rest = q, hits = {}, order = [];
+  cand.forEach(function(c){
+    var re = new RegExp('(^|[^a-z0-9])'+c.w.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'([^a-z0-9]|$)');
+    if (re.test(rest)){
+      if (!hits[c.id]){ hits[c.id] = true; order.push(c.id); }
+      rest = rest.replace(re, '  ');
+    }
+  });
+  return order;
+}
+function para(text){ return el('p',{text:text}); }
+function openBtns(ids, which){
+  return el('div',{class:'row'}, ids.map(function(id){ return btn('Open '+BY[id].name+(which === 'viz' ? ' visualizer' : ''), function(){ go(id, which || 'learn'); window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); }, 'sm'); }));
+}
+function showAnswer(question, title, body){
+  var box = $('#answer'); box.hidden = false;
+  var cardEl = el('div',{class:'answer'},
+    el('header',{}, el('h3',{text:title}), btn('Dismiss', function(){ cardEl.classList.add('out'); setTimeout(function(){ box.hidden = true; box.replaceChildren(); }, reduce ? 0 : 260); }, 'sm')),
+    el('div',{class:'q',text:'You asked: '+question}), body,
+    el('div',{class:'row grok-only'}, btn('Ask AI about this', function(){ openChat(question, true); }, 'sm')));
+  box.replaceChildren(cardEl);
+}
+function answer(raw){
+  var q = norm(raw), ids = findTopics(q), body, title;
+  var wantCx = /complex|big.?o|o\(|time|space|fast|slow|efficien|cost|how long/.test(q);
+  var wantCode = /code|implement|python|write|program|build|snippet|example/.test(q);
+  var wantWatch = /mistake|pitfall|bug|wrong|careful|gotcha|problem|downside|drawback|disadvantage/.test(q);
+  var wantUse = /when|use case|used for|where|should i|why use|advantage|benefit/.test(q);
+  var wantViz = /visuali|show me|animate|demo|see how|simulate/.test(q);
+  var scen = SCENARIOS.filter(function(s){ return s[0].test(q); });
+  var ask = /(i need|i want|i have|which|what should|what.*best|best.*(for|to)|recommend|suggest|what data structure|use for)/.test(q);
+
+  if ((ask || !ids.length) && scen.length && !(ids.length > 1)){
+    var pick = scen.slice(0,2);
+    title = 'Suggested: ' + pick.map(function(s){ return BY[s[1]].name; }).join(' or ');
+    body = el('div',{class:'cmp'}, pick.map(function(s){
+      var t = BY[s[1]];
+      return el('div',{style:'display:grid;gap:10px;align-content:start'}, para(t.name+' fits because '+s[2]+'.'), para(t.tagline), openBtns([s[1]]));
+    }));
+    return showAnswer(raw, title, body);
+  }
+  if (!ids.length){
+    return showAnswer(raw, 'I can help with these topics', el('div',{style:'display:grid;gap:12px'},
+      para('I did not match that to a topic. I cover arrays, linked lists, stacks, queues, binary search trees, heaps, hash tables and graphs. Try "what is the time complexity of a heap insert", "stack vs queue", "implement a hash table", or describe a job you need done, such as "I need to undo actions".'),
+      openBtns(TOPICS.map(function(t){ return t.id; }).slice(0,4)), openBtns(TOPICS.map(function(t){ return t.id; }).slice(4))));
+  }
+  if (ids.length === 1 && ids[0] === 'graph' && /bfs.*dfs|dfs.*bfs|breadth.*depth|depth.*breadth/.test(q)){
+    return showAnswer(raw, 'BFS vs DFS', el('div',{style:'display:grid;gap:12px'}, para(BFSDFS), openBtns(['graph'],'viz')));
+  }
+  if (ids.length >= 2){
+    var two = ids.slice(0,2), key = two.slice().sort().join('|'), A = BY[two[0]], B = BY[two[1]];
+    title = A.name + ' vs ' + B.name;
+    body = el('div',{style:'display:grid;gap:14px'},
+      para(COMPARE[key] || (A.name+': '+A.tagline+' '+B.name+': '+B.tagline)),
+      el('div',{class:'cmp'}, [A,B].map(function(t){ return el('div',{}, el('h3',{text:t.name,style:'margin:0 0 6px;font:600 15px var(--font)'}), cxTable(t.cx.slice(0,4))); })),
+      openBtns(two));
+    return showAnswer(raw, title, body);
+  }
+  var t = BY[ids[0]], parts = [];
+  if (wantCode){
+    title = t.name + ': Python code';
+    parts.push(para('Here is a compact implementation. The comments mark the cost of each operation.'), renderCode(t), openBtns([t.id]));
+  } else if (wantWatch){
+    title = t.name + ': common pitfalls';
+    parts.push(el('ul',{}, t.watch.map(function(w){ return el('li',{text:w}); })), openBtns([t.id]));
+  } else if (wantCx){
+    var rows = t.cx, note = '';
+    var ops = [[/insert|add|push|enqueue|append/,/insert|add|push|enqueue|append/],[/delete|remove|pop|dequeue|extract/,/delete|remove|pop|dequeue|extract/],[/search|find|lookup|look up|get|access|peek|contains/,/search|find|lookup|access|peek|check/],[/space|memory/,/space/],[/traver|bfs|dfs/,/traver|bfs/]];
+    for (var i = 0; i < ops.length; i++){
+      if (ops[i][0].test(q)){
+        var f = t.cx.filter(function(r){ return ops[i][1].test(r[0].toLowerCase()); });
+        if (f.length){ rows = f; note = 'Showing the rows that match your question. '; }
+        break;
+      }
+    }
+    title = t.name + ': complexity';
+    parts.push(para(note+'Average and worst case differ when the structure can degrade, for example an unbalanced tree or a table full of collisions.'), cxTable(rows), openBtns([t.id]));
+  } else if (wantUse){
+    title = 'When to use a ' + t.name.toLowerCase();
+    parts.push(el('ul',{}, t.use.map(function(w){ return el('li',{text:w}); })), para('Watch out: '+t.watch[0]+'.'), openBtns([t.id]));
+  } else {
+    title = t.name;
+    parts.push(para(t.explain[0]), para('Think of it as: '+t.analogy.charAt(0).toLowerCase()+t.analogy.slice(1)), cxTable(t.cx.slice(0,4)), openBtns([t.id]), el('div',{class:'row'}, btn('Try the visualizer', function(){ go(t.id,'viz'); }, 'sm'), btn('Take the quiz', function(){ go(t.id,'quiz'); }, 'sm')));
+  }
+  if (wantViz) parts.push(openBtns([t.id],'viz'));
+  showAnswer(raw, title, el('div',{style:'display:grid;gap:12px'}, parts));
+}
+function askAbout(text){ openChat(text, true); }
+
+/* ---------------- boot ---------------- */
+document.documentElement.setAttribute('data-grok','checking');
+var nav = $('#nav');
+var spark = sv('svg',{width:14,height:14,viewBox:'0 0 24 24',fill:'#fff'}, sv('path',{d:'M12 3l2.1 5.9L20 11l-5.9 2.1L12 19l-2.1-5.9L4 11l5.9-2.1z'}));
+var cb = el('button',{type:'button','data-id':'chat',class:'navchat',style:'--i:0'}, el('span',{class:'navglyph'}, spark), el('span',{class:'navtxt',text:'Tutor chat'}), el('small',{text:'AI'}));
+cb.addEventListener('click', function(){ showChat(); });
+nav.append(cb, el('div',{class:'navsep'}));
+TOPICS.forEach(function(t, n){
+  var b = el('button',{type:'button','data-id':t.id,style:'--i:'+(n+1)}, t.name, el('small',{text:t.tag}));
+  b.addEventListener('click', function(){ go(t.id,'learn'); });
+  nav.append(b);
+});
+var SUG = ['when should I use a stack?','heap vs bst','time complexity of hash table lookup','I need to undo actions','implement a queue in python','bfs vs dfs'];
+SUG.forEach(function(s){
+  var c = el('button',{type:'button',class:'chip',text:s});
+  c.addEventListener('click', function(){ $('#q').value = s; answer(s); });
+  $('#chips').append(c);
+});
+$('#askform').addEventListener('submit', function(e){ e.preventDefault(); var v = $('#q').value.trim(); if (v) answer(v); });
+var start = store.get('structura-topic');
+go(BY[start] ? start : 'stack', 'learn');
+
+(async function(){
+  try {
+    var ctl = new AbortController(), tm = setTimeout(function(){ ctl.abort(); }, 2500);
+    var r = await fetch('/api/health',{signal:ctl.signal,cache:'no-store'});
+    clearTimeout(tm);
+    var j = await r.json();
+    grok.state = j && j.ok ? (j.hasKey ? 'ready' : 'nokey') : 'offline';
+    grok.model = (j && j.model) || ''; grok.provider = (j && j.provider) || '';
+  } catch(e){ grok.state = 'offline'; }
+  document.documentElement.setAttribute('data-grok', grok.state);
+  if (view === 'chat') showChat();
+})();
+})();
+</script>
